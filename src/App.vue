@@ -279,7 +279,6 @@
         <span class="title">Is It A Wordle?</span>
       </div>
       <div class="col-md-3 help">
-        <QuestionMarkCircleIcon @click="showHelpModal = true"></QuestionMarkCircleIcon>
       </div>
     </div>
     <div class="info">
