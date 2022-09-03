@@ -3,10 +3,6 @@
   defineProps({
     letters: Array,
     keyboard: Boolean,
-    guessOnAcceptedList: Boolean,
-    guessOnAnswerList: Boolean,
-    guessNotOnScrabbleList: Boolean,
-    guessNotInDictionary: Boolean,
     guess: Number,
     currentGuess: Number,
     currentPosition: Number,
@@ -15,7 +11,7 @@
 </script>
 
 <template>
-  <div class="row" :class="{'on-answer': guessOnAnswerList, 'not-scrabble': guessNotOnScrabbleList, 'not-word': guessNotInDictionary }">
+  <div class="row">
     <Tile v-for="(letter, index) in letters" :letter="letter.letter" :state="letter.state" :keyboard="keyboard" :index="index" :initialized="letter.initialized" :colored="letter.colored" :currentPosition="currentPosition" :guessNumber="guess" :currentGuess="currentGuess" :wordLength="wordLength" v-bind:key="index"></Tile>
   </div>
 </template>

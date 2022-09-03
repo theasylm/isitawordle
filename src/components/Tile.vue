@@ -72,7 +72,6 @@
   }
   .current-tile {
     border-width: 5px;
-    margin-top: -2px;
   }
   .unguessed.colored {
     background-color: #818384;

@@ -3,9 +3,11 @@
   import { $vfm, VueFinalModal, ModalsContainer } from 'vue-final-modal'
   import Board from './components/Board.vue'
   import Keyboard from './components/Keyboard.vue'
-  import { QuestionMarkCircleIcon } from '@heroicons/vue/outline'
-  import { acceptedWordList } from './assets/js/acceptedWordList.js'
+  import { QuestionMarkCircleIcon, CheckIcon, XIcon } from '@heroicons/vue/outline'
+  import { originalAcceptedWordList } from './assets/js/originalAcceptedWordList.js'
+  import { currentAcceptedWordList} from './assets/js/currentAcceptedWordList.js'
   import { answerWordList } from './assets/js/answerWordList.js'
+  import { originalAnswerWordList } from './assets/js/originalAnswerWordList.js'
   import { scrabbleExcludedWordList } from './assets/js/scrabbleExcludedWordList.js'
 
   let keyboardRows = ref([
@@ -234,39 +236,52 @@
     tile['letter'] = ''
   }
 
-  const guessOnAcceptedList = computed(() => {
-    let playerAnswer = guesses.value[0].map((e) => e['letter']).join('')
-    
-    if ( playerAnswer.length != wordLength || playerAnswer.match(/_/) ) {
+  const playerAnswer = computed(() => {
+    return guesses.value[0].map((e) => e['letter']).join('')
+  })
+
+  const guessComplete = computed(() => {
+    return playerAnswer.value.length == wordLength
+  })
+
+  const guessOnOriginalAcceptedList = computed(() => {
+    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
       return false;
     }
 
-    return acceptedWordList.includes(playerAnswer)
+    return originalAcceptedWordList.includes(playerAnswer.value)
+  })
+
+  const guessOnCurrentAcceptedList = computed(() => {
+    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
+      return false;
+    }
+
+    return currentAcceptedWordList.includes(playerAnswer.value)
   })
 
   const guessOnAnswerList = computed(() => {
-    let playerAnswer = guesses.value[0].map((e) => e['letter']).join('')
-    if ( playerAnswer.length != wordLength || playerAnswer.match(/_/) ) {
+    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
       return false
     }
 
-    return answerWordList.includes(playerAnswer) && !guessNotOnScrabbleList.value
+    return answerWordList.includes(playerAnswer.value)
   })
 
-  const guessNotOnScrabbleList = computed(() => {
-    let playerAnswer = guesses.value[0].map((e) => e['letter']).join('')
-    if ( playerAnswer.length != wordLength || playerAnswer.match(/_/) ) {
+  const guessOnOriginalAnswerList = computed(() => {
+    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
       return false
     }
 
-    return scrabbleExcludedWordList.includes(playerAnswer)
+    return originalAnswerWordList.includes(playerAnswer.value)
   })
-  const guessNotInDictionary = computed(() => {
-    let playerAnswer = guesses.value[0].map((e) => e['letter']).join('')
-    if ( playerAnswer.length != wordLength || playerAnswer.match(/_/) ) {
+
+  const guessOnScrabbleList = computed(() => {
+    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
       return false
     }
-    return !guessOnAcceptedList.value && !guessOnAnswerList.value
+
+    return (guessOnAnswerList.value || guessOnOriginalAcceptedList.value ) && !scrabbleExcludedWordList.includes(playerAnswer.value)
   })
 </script>
 
@@ -281,18 +296,34 @@
       <div class="col-md-3 help">
       </div>
     </div>
-    <div class="info">
-      <h5 class="warning-message" :class="{'shown': guessOnAnswerList || guessOnAcceptedList || guessNotInDictionary }">
-        <span v-if="guessOnAnswerList" class="on-answer">Word on answer list.</span>
-        <span v-else-if="guessOnAcceptedList && !guessNotOnScrabbleList" class="on-accepted">Word on accepted list.</span>
-        <span v-else-if="guessOnAcceptedList && guessNotOnScrabbleList" class="not-scrabble">Word on accepted list but not on the NA Scrabble list.</span>
-        <span v-else-if="guessNotInDictionary" class="not-word">Word not in dictionary.</span>
-        <span v-else>&nbsp;</span>
-      </h5>
-   </div>
-
-   <Board :guesses="guesses" :guessOnAcceptedList="guessOnAcceptedList" :guessOnAnswerList="guessOnAnswerList" :guessNotOnScrabbleList="guessNotOnScrabbleList" :guessNotInDictionary="guessNotInDictionary" :currentPosition="currentPosition" :wordLength="wordLength"></Board>
-
+    <Board :guesses="guesses" :currentPosition="currentPosition" :wordLength="wordLength"></Board>
+    <table id="info">
+      <tr>
+        <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnAnswerList}"></CheckIcon></td>
+        <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnAnswerList}"></XIcon></td>
+        <td>On current Wordle answer list</td>
+      </tr>
+      <tr>
+        <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnOriginalAnswerList}"></CheckIcon></td>
+        <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnOriginalAnswerList}"></XIcon></td>
+        <td>On original Wordle answer list,<br/>as used by many variants</td>
+      </tr>
+      <tr>
+        <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnCurrentAcceptedList}"></CheckIcon></td>
+        <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnCurrentAcceptedList}"></XIcon></td>
+        <td>On current Wordle accepted list</td>
+      </tr>
+      <tr>
+        <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnOriginalAcceptedList}"></CheckIcon></td>
+        <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnOriginalAcceptedList}"></XIcon></td>
+        <td>On original Wordle accepted list,<br/>as used by many variants</td>
+      </tr>
+      <tr>
+        <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnScrabbleList}"></CheckIcon></td>
+        <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnScrabbleList}"></XIcon></td>
+        <td>On NA Scrabble list</td>
+      </tr>
+    </table>
     <Keyboard :rows="keyboardRows"></Keyboard>
     <div class="footer">
       Created by theasylm
@@ -336,5 +367,25 @@
   }
   .warning-message.shown {
     visibility: visible;
+  }
+  .icon {
+    width: 2rem;
+    margin-top:  -.4rem;
+    color: #333;
+  }
+  .on-list {
+    color: green;
+  }
+  .not-on-list {
+    color: red;
+  }
+  #info {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.5rem;
+    text-align: left;
+  }
+  #info td {
+    vertical-align: top;
   }
 </style>

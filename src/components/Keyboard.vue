@@ -7,7 +7,7 @@
 
 <template>
   <div class="keyboard">
-    <Row :letters="row" v-for="row in rows" :keyboard="true"></Row>
+    <Row :letters="row" v-for="row in rows" :keyboard="true" v-bind:key="row"></Row>
   </div>
 </template>
 
