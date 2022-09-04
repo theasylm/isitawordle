@@ -249,7 +249,7 @@
       return false;
     }
 
-    return originalAcceptedWordList.includes(playerAnswer.value)
+    return guessOnOriginalAnswerList.value || originalAcceptedWordList.includes(playerAnswer.value)
   })
 
   const guessOnCurrentAcceptedList = computed(() => {
@@ -257,7 +257,7 @@
       return false;
     }
 
-    return currentAcceptedWordList.includes(playerAnswer.value)
+    return guessOnAnswerList.value || currentAcceptedWordList.includes(playerAnswer.value)
   })
 
   const guessOnAnswerList = computed(() => {
@@ -301,27 +301,27 @@
       <tr>
         <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnAnswerList}"></CheckIcon></td>
         <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnAnswerList}"></XIcon></td>
-        <td>On current Wordle answer list</td>
+        <td>Can be a current NYT Wordle answer</td>
       </tr>
       <tr>
         <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnOriginalAnswerList}"></CheckIcon></td>
         <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnOriginalAnswerList}"></XIcon></td>
-        <td>On original Wordle answer list,<br/>as used by many variants</td>
+        <td>Can be an original, Pre-NYT Wordle answer</td>
       </tr>
       <tr>
         <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnCurrentAcceptedList}"></CheckIcon></td>
         <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnCurrentAcceptedList}"></XIcon></td>
-        <td>On current Wordle accepted list</td>
+        <td>Is accepted by current NYT Wordle</td>
       </tr>
       <tr>
         <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnOriginalAcceptedList}"></CheckIcon></td>
         <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnOriginalAcceptedList}"></XIcon></td>
-        <td>On original Wordle accepted list,<br/>as used by many variants</td>
+        <td>Is accepted by original NYT Wordle</td>
       </tr>
       <tr>
         <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnScrabbleList}"></CheckIcon></td>
         <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnScrabbleList}"></XIcon></td>
-        <td>On NA Scrabble list</td>
+        <td>Is accepted by NA Scrabble</td>
       </tr>
     </table>
     <Keyboard :rows="keyboardRows"></Keyboard>
