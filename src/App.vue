@@ -241,46 +241,26 @@
   })
 
   const guessComplete = computed(() => {
-    return playerAnswer.value.length == wordLength
+    return playerAnswer.value.length == wordLength && !playerAnswer.value.match(/_/)
   })
 
   const guessOnOriginalAcceptedList = computed(() => {
-    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
-      return false;
-    }
-
     return guessOnOriginalAnswerList.value || originalAcceptedWordList.includes(playerAnswer.value)
   })
 
   const guessOnCurrentAcceptedList = computed(() => {
-    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
-      return false;
-    }
-
     return guessOnAnswerList.value || currentAcceptedWordList.includes(playerAnswer.value)
   })
 
   const guessOnAnswerList = computed(() => {
-    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
-      return false
-    }
-
     return answerWordList.includes(playerAnswer.value)
   })
 
   const guessOnOriginalAnswerList = computed(() => {
-    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
-      return false
-    }
-
     return originalAnswerWordList.includes(playerAnswer.value)
   })
 
   const guessOnScrabbleList = computed(() => {
-    if ( playerAnswer.value.length != wordLength || playerAnswer.value.match(/_/) ) {
-      return false
-    }
-
     return (guessOnAnswerList.value || guessOnOriginalAcceptedList.value ) && !scrabbleExcludedWordList.includes(playerAnswer.value)
   })
 </script>
