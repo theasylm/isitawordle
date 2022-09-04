@@ -306,7 +306,7 @@
       <tr>
         <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnOriginalAnswerList}"></CheckIcon></td>
         <td><XIcon class="icon" :class="{'not-on-list': guessComplete && !guessOnOriginalAnswerList}"></XIcon></td>
-        <td>Can be an original, Pre-NYT Wordle answer</td>
+        <td>Can be an original Pre-NYT Wordle answer</td>
       </tr>
       <tr>
         <td><CheckIcon class="icon" :class="{'on-list': guessComplete && guessOnCurrentAcceptedList}"></CheckIcon></td>
